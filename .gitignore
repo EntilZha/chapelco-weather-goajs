@@ -21,3 +21,6 @@ _testmain.go
 
 *.exe
 *.test
+# Other files that should be excluded
+*.log
+*.swp

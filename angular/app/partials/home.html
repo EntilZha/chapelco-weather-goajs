@@ -1,0 +1,152 @@
+<div class="container">
+	<div class="row" id="title-row">
+		<div class="col-md-12 card">
+			<a href="http://www.chapelco.com.ar/" class="center-block"><img src="img/chapelco-logo.png" alt="Chapelco"></a>
+			<h1 class="center-block text-center">Weather at 1700M</h1>
+			<h2>{{currentWeather.Datetime | date : 'short'}}</h2>
+		</div>
+	</div>
+	<div class="row weather-cards" ng-hide="dataLoaded">
+		<div class="card reading" id="loading-card">
+			<img src="img/ajax-loader.gif" alt="loading icon"/>
+		</div>
+	</div>
+	<div class="row weather-cards" ng-show="dataLoaded">
+		<div class="col-md-3">
+			<div class="card reading" id="temp-card">
+				<div class="hint-container">
+					<h4 class="hint-text">Temperature</h4>
+				</div>
+				<h2 class="text-capitalize">{{currentWeather.Temperature}} &deg;C</h2>
+				<div class="chart-hint"><h4 class="glyphicon glyphicon-stats"></h4></div>
+			</div>
+			<div class="modal fade" id="temp-modal" tabindex="-1" role="dialog" aria-labelledby="temp-modal-label" aria-hidden="true">
+				<div class="modal-dialog graph-modal">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div id="temp-plot"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="card reading" id="dew-card">
+				<div class="hint-container">
+					<h4 class="hint-text">Dew Point</h4>
+				</div>
+				<h2 class="text-capitalize">{{currentWeather.DewPoint}} &deg;C</h2>
+				<div class="chart-hint"><h4 class="glyphicon glyphicon-stats"></h4></div>
+			</div>
+			<div class="modal fade" id="dew-modal" tabindex="-1" role="dialog" aria-labelledby="dew-modal-label" aria-hidden="true">
+				<div class="modal-dialog graph-modal">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div id="dew-plot"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="card reading" id="humidity-card">
+				<div class="hint-container">
+					<h4 class="hint-text">Humidity</h4>
+				</div>
+				<h2 class="text-capitalize">{{currentWeather.RelativeHumidity}}%</h2>
+				<div class="chart-hint"><h4 class="glyphicon glyphicon-stats"></h4></div>
+			</div>
+			<div class="modal fade" id="humidity-modal" tabindex="-1" role="dialog" aria-labelledby="humidity-modal-label" aria-hidden="true">
+				<div class="modal-dialog graph-modal">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div id="humidity-plot"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="card reading">
+				<div class="hint-container">
+					<h4 class="hint-text">Precipitation</h4>
+				</div>
+				<h2 class="text-capitalize">{{currentWeather.RainSum}} mm Total</h2>
+			</div>
+		</div>
+	</div>
+	<div class="row weather-cards" ng-show="dataLoaded">
+		<div class="col-md-3">
+			<div class="card reading" id="pressure-card">
+				<div class="hint-container">
+					<h4 class="hint-text">Pressure</h4>
+				</div>
+				<h2 class="text-capitalize">{{currentWeather.LocalPressure}} hPa</h2>
+				<div class="chart-hint"><h4 class="glyphicon glyphicon-stats"></h4></div>
+			</div>
+			<div class="modal fade" id="pressure-modal" tabindex="-1" role="dialog" aria-labelledby="pressure-modal-label" aria-hidden="true">
+				<div class="modal-dialog graph-modal">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div id="pressure-plot"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="card reading" id="abspressure-card">
+				<div class="hint-container">
+					<h4 class="hint-text">Abs. Pressure</h4>
+				</div>
+				<h2 class="text-capitalize">{{currentWeather.AbsolutePressure}} hPa</h2>
+				<div class="chart-hint"><h4 class="glyphicon glyphicon-stats"></h4></div>
+			</div>
+			<div class="modal fade" id="abspressure-modal" tabindex="-1" role="dialog" aria-labelledby="abspressure-modal-label" aria-hidden="true">
+				<div class="modal-dialog graph-modal">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div id="abspressure-plot"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="card reading">
+				<div class="hint-container">
+					<h4 class="hint-text">Weather</h4>
+				</div>
+				<h2 class="text-capitalize"><a href="http://www.chapelco.com.ar/parte-diario-clima.php" class="glyphicon glyphicon-cloud white"></a></h2>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="card reading">
+				<div class="hint-container">
+					<h4 class="hint-text">Cameras</h4>
+				</div>
+				<h2 class="text-capitalize"><a href="http://www.chapelco.com.ar/camara-base1.php" class="glyphicon glyphicon-camera white"></a></h2>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="footer-container" class="white" ng-show="dataLoaded">
+	<div id="footer">
+		Created by <a href="http://pedro-rodriguez.com" class="white">Pedro Rodriguez</a> of <a href="http://snowgeek.org/" class="white">SnowGeek</a>
+	</div>
+</div>

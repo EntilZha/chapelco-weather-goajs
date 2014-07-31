@@ -1,0 +1,83 @@
+html, body {
+    height: 100%
+}
+
+body {
+    background: url('../img/chapelco.jpg') no-repeat top center fixed;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    text-align: center;
+}
+.container {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -20px;
+}
+
+.card {
+    padding: 20px;
+    -webkit-box-shadow: 10px 10px 25px 0px rgba(0,0,0,0.34);
+    -moz-box-shadow: 10px 10px 25px 0px rgba(0,0,0,0.34);
+    box-shadow: 10px 10px 25px 0px rgba(0,0,0,0.34);
+    background-color: rgba(219, 219, 219, .7);
+    margin-bottom: 20px;
+    position: relative;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.weather-cards .card:hover {
+    background-color: rgba(150, 150, 150, .7);
+    cursor: pointer;
+}
+#loading-card {
+		margin: 0 auto;
+		width: 106px;
+		height: 106px;
+}
+.reading {
+    height: 100px;
+}
+#title-row {
+    margin-bottom: 30px;
+}
+.hint-container {
+    position: absolute;
+    top: 5px;
+    text-align: center;
+    left: 50%;
+}
+.hint-text {
+    left: -50%;
+    position: relative
+}
+#footer-container {
+    text-align: center;
+    width: 100%;
+}
+#footer {
+    background-color: rgba(219, 219, 219, .7);
+    margin: 0 auto;
+    width: 290px;
+    height: 20px;
+    -webkit-border-top-left-radius: 10px;
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.white {
+    color: white;
+}
+.graph-modal {
+    width: 700px;
+}
+.chart-hint {
+    position: absolute;
+    bottom: -2px;
+    right: 8px;
+}
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
