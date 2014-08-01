@@ -9,6 +9,16 @@ import (
 
 var cachedDbfTable = new(CachedDbfTable)
 
+const (
+	rainSum  = "RAIN_SUM"
+	presLoc  = "PRES_LOC"
+	presAbs  = "PRES_ABS"
+	chn1Deg  = "CHN1_DEG"
+	chn1Dew  = "CHN1_DEW"
+	chn1Rf   = "CHN1_RF"
+	dateTime = "DATE_TIME"
+)
+
 type CachedDbfTable struct {
 	DbfTable  *godbf.DbfTable
 	updatedAt time.Time
@@ -48,14 +58,14 @@ func getDbf() (*godbf.DbfTable, error) {
 func ReadWeatherRecordFromDbf(table *godbf.DbfTable, n int) *WeatherRecord {
 	var err1, err2, err3, err4, err5, err6, err7 error
 	record := new(WeatherRecord)
-	record.RainSum, err1 = table.Float64FieldValueByName(n, "RAIN_SUM")
-	record.LocalPressure, err2 = table.Float64FieldValueByName(n, "PRES_LOC")
-	record.AbsolutePressure, err3 = table.Float64FieldValueByName(n, "PRES_ABS")
-	record.Temperature, err4 = table.Float64FieldValueByName(n, "CHN1_DEG")
-	record.DewPoint, err5 = table.Float64FieldValueByName(n, "CHN1_DEW")
-	record.RelativeHumidity, err6 = table.Float64FieldValueByName(n, "CHN1_RF")
+	record.RainSum, err1 = table.Float64FieldValueByName(n, rainSum)
+	record.LocalPressure, err2 = table.Float64FieldValueByName(n, presLoc)
+	record.AbsolutePressure, err3 = table.Float64FieldValueByName(n, presAbs)
+	record.Temperature, err4 = table.Float64FieldValueByName(n, chn1Deg)
+	record.DewPoint, err5 = table.Float64FieldValueByName(n, chn1Dew)
+	record.RelativeHumidity, err6 = table.Float64FieldValueByName(n, chn1Rf)
 	var minutes float64
-	minutes, err7 = table.Float64FieldValueByName(n, "DATE_TIME")
+	minutes, err7 = table.Float64FieldValueByName(n, dateTime)
 	record.Datetime = time.Unix(int64((minutes-25569)*86400), 0).UTC()
 	if err1 != nil || err2 != nil || err3 != nil || err4 != nil || err5 != nil || err6 != nil || err7 != nil {
 		return nil
@@ -95,4 +105,61 @@ func ReadLastNWeatherRecords(n int) []WeatherRecord {
 		return nil
 	}
 	return ReadLastNWeatherRecordsFromDbf(table, n)
+}
+
+func ReadLastNWeatherRecordsToMap(n int) map[string][]float64 {
+	table, err := getDbf()
+	if err != nil {
+		return nil
+	}
+	fields := make(map[string][]float64)
+	fields[rainSum] = ReadLastNRainSums(table, n)
+	fields[presLoc] = ReadLastNPressures(table, n)
+	fields[presAbs] = ReadLastNAbsPressures(table, n)
+	fields[chn1Deg] = ReadLastNTemperatures(table, n)
+	fields[chn1Dew] = ReadLastNDewPoints(table, n)
+	fields[chn1Rf] = ReadLastNRelativeHumidities(table, n)
+	fields[dateTime] = ReadLastNDatetimes(table, n)
+	return fields
+}
+
+func ReadLastNRainSums(table *godbf.DbfTable, n int) []float64 {
+	return ReadLastNFromFloat64Field(table, n, rainSum)
+}
+
+func ReadLastNPressures(table *godbf.DbfTable, n int) []float64 {
+	return ReadLastNFromFloat64Field(table, n, presLoc)
+}
+
+func ReadLastNAbsPressures(table *godbf.DbfTable, n int) []float64 {
+	return ReadLastNFromFloat64Field(table, n, presAbs)
+}
+
+func ReadLastNTemperatures(table *godbf.DbfTable, n int) []float64 {
+	return ReadLastNFromFloat64Field(table, n, chn1Deg)
+}
+
+func ReadLastNDewPoints(table *godbf.DbfTable, n int) []float64 {
+	return ReadLastNFromFloat64Field(table, n, chn1Dew)
+}
+
+func ReadLastNRelativeHumidities(table *godbf.DbfTable, n int) []float64 {
+	return ReadLastNFromFloat64Field(table, n, chn1Rf)
+}
+
+func ReadLastNDatetimes(table *godbf.DbfTable, n int) []float64 {
+	return ReadLastNFromFloat64Field(table, n, dateTime)
+}
+
+func ReadLastNFromFloat64Field(table *godbf.DbfTable, n int, field string) []float64 {
+	rows := make([]float64, n)
+	var err error
+	start := table.NumberOfRecords() - n
+	for i := 0; i < n; i++ {
+		rows[i], err = table.Float64FieldValueByName(i+start, field)
+		if err != nil {
+			return nil
+		}
+	}
+	return rows
 }

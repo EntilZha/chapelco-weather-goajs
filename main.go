@@ -20,7 +20,7 @@ func currentWeatherHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-func pastWeatherHandler(w http.ResponseWriter, r *http.Request) {
+func pastWeatherRecordsHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	n, err := strconv.Atoi(params["n"])
 	if err != nil {
@@ -36,10 +36,27 @@ func pastWeatherHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+func pastWeatherListsHandler(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	n, err := strconv.Atoi(params["n"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	response, err := json.Marshal(weather.ReadLastNWeatherRecordsToMap(n))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(response)
+}
+
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/weather/current", currentWeatherHandler)
-	router.HandleFunc("/api/weather/past/{n}", pastWeatherHandler)
+	router.HandleFunc("/api/weather/past-record-list/{n}", pastWeatherRecordsHandler)
+	router.HandleFunc("/api/weather/past-field-lists/{n}", pastWeatherListsHandler)
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("angular/app")))
 	http.Handle("/", router)
 	http.ListenAndServe(":8080", nil)
