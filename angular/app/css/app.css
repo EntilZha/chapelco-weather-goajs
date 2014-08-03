@@ -81,3 +81,7 @@ body {
     right: 8px;
 }
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+#chart-modal-dialog {
+	width: 650px;
+}

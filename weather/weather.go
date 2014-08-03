@@ -46,8 +46,9 @@ func getDbf() (*godbf.DbfTable, error) {
 	cachedDbfTable.RUnlock()
 	if needsUpdate {
 		cachedDbfTable.Lock()
-		dbfPath := "http://googledrive.com/host/0B06ZoNF0o91ncXRPdVRuZjBDaE0"
-		cachedDbfTable.DbfTable, err = godbf.NewFromUrl(dbfPath, "UTF8")
+		dbfPath := "/Users/pedro/Documents/Code/chapelco-weather/SinusOrg.dbf"
+		// dbfPath := "http://googledrive.com/host/0B06ZoNF0o91ncXRPdVRuZjBDaE0"
+		cachedDbfTable.DbfTable, err = godbf.NewFromFile(dbfPath, "UTF8")
 		cachedDbfTable.updatedAt = time.Now()
 		*table = *cachedDbfTable.DbfTable
 		cachedDbfTable.Unlock()
@@ -107,19 +108,19 @@ func ReadLastNWeatherRecords(n int) []WeatherRecord {
 	return ReadLastNWeatherRecordsFromDbf(table, n)
 }
 
-func ReadLastNWeatherRecordsToMap(n int) map[string][]float64 {
+func ReadLastNWeatherRecordsToMap(n int) map[string]interface{} {
 	table, err := getDbf()
 	if err != nil {
 		return nil
 	}
-	fields := make(map[string][]float64)
+	fields := make(map[string]interface{})
 	fields[rainSum] = ReadLastNRainSums(table, n)
 	fields[presLoc] = ReadLastNPressures(table, n)
 	fields[presAbs] = ReadLastNAbsPressures(table, n)
 	fields[chn1Deg] = ReadLastNTemperatures(table, n)
 	fields[chn1Dew] = ReadLastNDewPoints(table, n)
 	fields[chn1Rf] = ReadLastNRelativeHumidities(table, n)
-	fields[dateTime] = ReadLastNDatetimes(table, n)
+	fields[dateTime] = ReadLastNDateTimes(table, n)
 	return fields
 }
 
@@ -147,16 +148,26 @@ func ReadLastNRelativeHumidities(table *godbf.DbfTable, n int) []float64 {
 	return ReadLastNFromFloat64Field(table, n, chn1Rf)
 }
 
-func ReadLastNDatetimes(table *godbf.DbfTable, n int) []float64 {
-	return ReadLastNFromFloat64Field(table, n, dateTime)
-}
-
 func ReadLastNFromFloat64Field(table *godbf.DbfTable, n int, field string) []float64 {
 	rows := make([]float64, n)
 	var err error
 	start := table.NumberOfRecords() - n
 	for i := 0; i < n; i++ {
 		rows[i], err = table.Float64FieldValueByName(i+start, field)
+		if err != nil {
+			return nil
+		}
+	}
+	return rows
+}
+
+func ReadLastNDateTimes(table *godbf.DbfTable, n int) []string {
+	rows := make([]string, n)
+	start := table.NumberOfRecords() - n
+	for i := 0; i < n; i++ {
+		rawVal, err := table.Float64FieldValueByName(i+start, dateTime)
+		seconds := int64((rawVal - 25569) * 86400)
+		rows[i] = time.Unix(seconds, 0).UTC().Format("1/2 15:04")
 		if err != nil {
 			return nil
 		}
