@@ -9,15 +9,11 @@ chapelcoWeatherAppControllers.controller('CurrentWeatherCtrl', ['$scope', '$http
 }]);
 
 chapelcoWeatherAppControllers.controller('WeatherChartsCtrl', ['$scope', '$http', function($scope, $http) {
-	$http.get('api/weather/past-field-lists/10').success(function(data) {
+	$http.get('api/weather/past-field-lists/432').success(function(data) {
 		$scope.data = data;
 	});
 	options = {
 		xAxis: {
-			labels: {
-				rotation: 45,
-				step: 6
-			},
 			title: {}
 		},
 		yAxis: {
@@ -34,6 +30,7 @@ chapelcoWeatherAppControllers.controller('WeatherChartsCtrl', ['$scope', '$http'
 		options.title = { text: title, x: -20};
 		options.xAxis.title.text = 'Time';
 		options.xAxis.categories = $scope.data['DATE_TIME'];
+		options.xAxis.labels = { rotation: 45, step: 18 };
 		options.yAxis.title.text = yTitle;
 		options.series = [{
 			data: $scope.data[seriesName],
