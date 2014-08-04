@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"net/http"
 	"strconv"
 
@@ -53,11 +54,13 @@ func pastWeatherListsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	portPtr := flag.String("port", "8080", "Port for web server")
+	flag.Parse()
 	router := mux.NewRouter()
 	router.HandleFunc("/api/weather/current", currentWeatherHandler)
 	router.HandleFunc("/api/weather/past-record-list/{n}", pastWeatherRecordsHandler)
 	router.HandleFunc("/api/weather/past-field-lists/{n}", pastWeatherListsHandler)
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("angular/app")))
 	http.Handle("/", router)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":"+*portPtr, nil)
 }

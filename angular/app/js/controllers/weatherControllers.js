@@ -9,7 +9,7 @@ chapelcoWeatherAppControllers.controller('CurrentWeatherCtrl', ['$scope', '$http
 }]);
 
 chapelcoWeatherAppControllers.controller('WeatherChartsCtrl', ['$scope', '$http', function($scope, $http) {
-	$http.get('api/weather/past-field-lists/432').success(function(data) {
+	$http.get('api/weather/past-field-lists/400').success(function(data) {
 		$scope.data = data;
 	});
 	options = {
