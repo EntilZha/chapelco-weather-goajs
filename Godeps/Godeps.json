@@ -1,0 +1,24 @@
+{
+	"ImportPath": "github.com/EntilZha/chapelco-weather-goajs",
+	"GoVersion": "go1.3",
+	"Deps": [
+		{
+			"ImportPath": "code.google.com/p/mahonia",
+			"Comment": "null-32",
+			"Rev": "937b608805fa1ef555f3247a411a967ca3fa3466"
+		},
+		{
+			"ImportPath": "code.google.com/r/skirodriguez-dbf/godbf",
+			"Comment": "null-9",
+			"Rev": "00283c9e6f76f773ea37eda8e35daf3a34e7a8a2"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "14f550f51af52180c2eefed15e5fd18d63c0a64a"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "14cafe28513321476c73967a5a4f3454b6129c46"
+		}
+	]
+}
