@@ -46,9 +46,9 @@ func getDbf() (*godbf.DbfTable, error) {
 	cachedDbfTable.RUnlock()
 	if needsUpdate {
 		cachedDbfTable.Lock()
-		dbfPath := "/Users/pedro/Downloads/chapelco.dbf"
-		//dbfPath := "http://googledrive.com/host/0B06ZoNF0o91ncXRPdVRuZjBDaE0"
-		cachedDbfTable.DbfTable, err = godbf.NewFromFile(dbfPath, "UTF8")
+		//dbfPath := "/Users/pedro/Downloads/chapelco.dbf"
+		dbfPath := "http://googledrive.com/host/0B06ZoNF0o91ncXRPdVRuZjBDaE0"
+		cachedDbfTable.DbfTable, err = godbf.NewFromUrl(dbfPath, "UTF8")
 		cachedDbfTable.updatedAt = time.Now()
 		*table = *cachedDbfTable.DbfTable
 		cachedDbfTable.Unlock()
