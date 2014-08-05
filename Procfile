@@ -1,1 +1,1 @@
-web: chapelco-weather-goajs -port=$PORT
+web: chapelco-weather-goajs

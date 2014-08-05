@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/EntilZha/chapelco-weather-goajs/weather"
@@ -53,14 +53,21 @@ func pastWeatherListsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+func getPort() string {
+	var port = os.Getenv("PORT")
+	// Set a default port if there is nothing in the environment
+	if port == "" {
+		port = "8080"
+	}
+	return ":" + port
+}
+
 func main() {
-	portPtr := flag.String("port", "8080", "Port for web server")
-	flag.Parse()
 	router := mux.NewRouter()
 	router.HandleFunc("/api/weather/current", currentWeatherHandler)
 	router.HandleFunc("/api/weather/past-record-list/{n}", pastWeatherRecordsHandler)
 	router.HandleFunc("/api/weather/past-field-lists/{n}", pastWeatherListsHandler)
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("angular/app")))
 	http.Handle("/", router)
-	http.ListenAndServe(":"+*portPtr, nil)
+	http.ListenAndServe(getPort(), nil)
 }
