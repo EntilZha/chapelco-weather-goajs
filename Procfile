@@ -1,1 +1,1 @@
-web: chapelco-weather-goajs
+web: ./chapelco-weather-goajs
