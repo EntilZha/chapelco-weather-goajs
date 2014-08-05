@@ -68,6 +68,7 @@ func main() {
 	router.HandleFunc("/api/weather/past-record-list/{n}", pastWeatherRecordsHandler)
 	router.HandleFunc("/api/weather/past-field-lists/{n}", pastWeatherListsHandler)
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("angular/app")))
+	router.PathPrefix("/bower_components").Handler(http.FileServer(http.Dir("angular/app/bower_components")))
 	http.Handle("/", router)
 	http.ListenAndServe(getPort(), nil)
 }
