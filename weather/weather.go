@@ -66,7 +66,7 @@ func ReadWeatherRecordFromDbf(table *godbf.DbfTable, n int) *WeatherRecord {
 	record.RelativeHumidity, err6 = table.Float64FieldValueByName(n, chn1Rf)
 	var minutes float64
 	minutes, err7 = table.Float64FieldValueByName(n, dateTime)
-	record.Datetime = time.Unix(int64((minutes-25569)*86400), 0).UTC()
+	record.Datetime = time.Unix(int64((minutes-25569.0)*86400.0), 0).UTC()
 	if err1 != nil || err2 != nil || err3 != nil || err4 != nil || err5 != nil || err6 != nil || err7 != nil {
 		return nil
 	}
