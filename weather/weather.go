@@ -1,3 +1,7 @@
+// Copyright 2014 Pedro Rodriguez. All rights reserved.
+// Use of this code is governed by the MIT License
+
+// Provides interface to weather data from Chapelco Ski Resort weather station via Google Drive
 package weather
 
 import (
@@ -7,8 +11,10 @@ import (
 	"code.google.com/r/skirodriguez-dbf/godbf"
 )
 
+// cachedDbfTable holds cached DbfTable. It is only fetched every 20 minutes after it is stale.
 var cachedDbfTable = new(CachedDbfTable)
 
+// Constants to access variables from Chapelco weather .dbf file
 const (
 	rainSum  = "RAIN_SUM"
 	presLoc  = "PRES_LOC"
@@ -19,12 +25,15 @@ const (
 	dateTime = "DATE_TIME"
 )
 
+// CachedDbfTable consists of DbfTable which holds a godbf.DfTable, updatedAt contains the time.Time it was
+// last updated, and holds a Read/Write lock to insure that the table is in sync with when it was last updated.
 type CachedDbfTable struct {
 	DbfTable  *godbf.DbfTable
 	updatedAt time.Time
 	sync.RWMutex
 }
 
+// WeatherRecord represents one weather observation from the weather station
 type WeatherRecord struct {
 	Datetime         time.Time
 	LocalPressure    float64
@@ -35,6 +44,8 @@ type WeatherRecord struct {
 	RelativeHumidity float64
 }
 
+// getDbf returns a pointer to a dbf table from a constant defined url. On first call it fetches the table, thereafter
+// returns the value from the cached table unless it is stale by 20 minutes or more.
 func getDbf() (*godbf.DbfTable, error) {
 	var err error
 	table := new(godbf.DbfTable)
@@ -56,6 +67,7 @@ func getDbf() (*godbf.DbfTable, error) {
 	return table, err
 }
 
+// ReadWeatherRecordFromDbf reads a single WeatherRecord from the given Dbf Table.
 func ReadWeatherRecordFromDbf(table *godbf.DbfTable, n int) *WeatherRecord {
 	var err1, err2, err3, err4, err5, err6, err7 error
 	record := new(WeatherRecord)
@@ -74,6 +86,7 @@ func ReadWeatherRecordFromDbf(table *godbf.DbfTable, n int) *WeatherRecord {
 	return record
 }
 
+// ReadLastNWeatherRecordsFromDbf reads the last n WeatherRecords from the DbfTable
 func ReadLastNWeatherRecordsFromDbf(table *godbf.DbfTable, n int) []WeatherRecord {
 	total := table.NumberOfRecords()
 	start := total - n
@@ -91,6 +104,7 @@ func ReadLastNWeatherRecordsFromDbf(table *godbf.DbfTable, n int) []WeatherRecor
 	return records
 }
 
+// ReadCurrentWeatherRecord reads the most recent (last 1) WeatherRecord from the DbfTable
 func ReadCurrentWeatherRecord() *WeatherRecord {
 	table, err := getDbf()
 	if err != nil {
@@ -100,6 +114,7 @@ func ReadCurrentWeatherRecord() *WeatherRecord {
 	return ReadWeatherRecordFromDbf(table, n)
 }
 
+// ReadLastNWeatherRecords reads the last n records from the cached DbfTable
 func ReadLastNWeatherRecords(n int) []WeatherRecord {
 	table, err := getDbf()
 	if err != nil {
@@ -108,6 +123,7 @@ func ReadLastNWeatherRecords(n int) []WeatherRecord {
 	return ReadLastNWeatherRecordsFromDbf(table, n)
 }
 
+// ReadLastNWeatherRecordsToMap reads the last n records in separate lists into a map with keys from code.
 func ReadLastNWeatherRecordsToMap(n int) map[string]interface{} {
 	table, err := getDbf()
 	if err != nil {
@@ -124,30 +140,37 @@ func ReadLastNWeatherRecordsToMap(n int) map[string]interface{} {
 	return fields
 }
 
+// ReadLastNRainSums reads the last n RAIN_SUM records
 func ReadLastNRainSums(table *godbf.DbfTable, n int) []float64 {
 	return ReadLastNFromFloat64Field(table, n, rainSum)
 }
 
+// ReadLastNPressures reads the last n PRES_LOC records
 func ReadLastNPressures(table *godbf.DbfTable, n int) []float64 {
 	return ReadLastNFromFloat64Field(table, n, presLoc)
 }
 
+// ReadLastNAbsPressures reads the last n PRES_ABS records
 func ReadLastNAbsPressures(table *godbf.DbfTable, n int) []float64 {
 	return ReadLastNFromFloat64Field(table, n, presAbs)
 }
 
+// ReadLastNTemperatures reads the last n CHN1_DEG records
 func ReadLastNTemperatures(table *godbf.DbfTable, n int) []float64 {
 	return ReadLastNFromFloat64Field(table, n, chn1Deg)
 }
 
+// ReadLastNDewPoints reads the last n CHN1_DEW records
 func ReadLastNDewPoints(table *godbf.DbfTable, n int) []float64 {
 	return ReadLastNFromFloat64Field(table, n, chn1Dew)
 }
 
+// ReadLastNRelativeHumidities reads the last n CHN1_RF records
 func ReadLastNRelativeHumidities(table *godbf.DbfTable, n int) []float64 {
 	return ReadLastNFromFloat64Field(table, n, chn1Rf)
 }
 
+// ReadLastNFromFloat64Field reads the last n records by field string
 func ReadLastNFromFloat64Field(table *godbf.DbfTable, n int, field string) []float64 {
 	rows := make([]float64, n)
 	var err error
@@ -161,6 +184,7 @@ func ReadLastNFromFloat64Field(table *godbf.DbfTable, n int, field string) []flo
 	return rows
 }
 
+// ReadLastNDateTimes reads the last n DATE_TIME records
 func ReadLastNDateTimes(table *godbf.DbfTable, n int) []string {
 	rows := make([]string, n)
 	start := table.NumberOfRecords() - n
